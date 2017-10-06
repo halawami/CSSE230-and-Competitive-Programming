@@ -1,0 +1,66 @@
+package evaluator;
+
+import java.util.Stack;
+
+public class PostfixEvaluator extends Evaluator {
+
+	@Override
+	public int evaluate(String expression) throws ArithmeticException {
+		int pop1;
+		int pop2;
+		Stack<Integer> stack = new Stack<Integer>();
+
+		for (int i = 0; i < expression.length(); i++) {
+			char ch = expression.charAt(i);
+		
+			if (ch == ' ') {
+				// Skip over
+			} else if (ch > '0' && ch < '9') {
+				int num = Character.getNumericValue(ch);
+				stack.push(num);
+			} else {
+				if (!stack.isEmpty()) {
+					pop1 = stack.pop();
+				} else {
+					throw new ArithmeticException();
+				}
+				if (!stack.isEmpty()) {
+					pop2 = stack.pop();
+				} else {
+					throw new ArithmeticException();
+				}
+				
+				switch (ch) {
+				case '+':
+					stack.push(pop2 + pop1);
+					break;
+
+				case '-':
+					stack.push(pop2 - pop1);
+					break;
+
+				case '*':
+					stack.push(pop2 * pop1);
+					break;
+
+				case '/':
+					stack.push(pop2 / pop1);
+					break;
+
+				case '^':
+					stack.push(pop1 ^ pop2);
+					break;
+
+				default:
+					System.out.println("Invalid input");
+					//throw new ArithmeticException();
+				}
+			}
+		}
+		if (!stack.isEmpty()) {
+			return stack.pop();
+		}
+		return 0;
+
+	}
+}

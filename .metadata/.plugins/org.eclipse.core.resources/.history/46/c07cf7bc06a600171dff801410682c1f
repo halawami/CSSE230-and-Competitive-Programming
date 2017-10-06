@@ -1,0 +1,151 @@
+/**
+ * More Binary Tree practice problems. This problem creates BSTs of type
+ * Integer: 1. Neither problem makes use of the BST ordering property; I just
+ * found insert() to be a convenient way to build trees for testing. 2. I used
+ * Integer instead of T since the makeTree method sets the data value of each
+ * node to be a depth, which is an Integer.
+ * 
+ * @author Matt Boutell and <<<YOUR NAME HERE>>>.
+ * @param <T>
+ */
+
+/*
+ * TODO: 0 You are to implement the methods below. Use recursion!
+ */
+public class BinarySearchTree {
+
+	private BinaryNode root;
+
+	private final BinaryNode NULL_NODE = new BinaryNode(null);
+
+	public BinarySearchTree() {
+		root = NULL_NODE;
+	}
+
+	/**
+	 * This constructor creates a full tree of Integers, where the value of each
+	 * node is just the depth of that node in the tree.
+	 * 
+	 * @param maxDepth
+	 *            The depth of the leaves in the tree.
+	 */
+	public BinarySearchTree(int maxDepth) {
+		// DONE: 1 Write this.
+		// Hint: You may find it easier if your recursive helper method is
+		// outside of the BinaryNode class.
+		root = add(maxDepth,0,this.root);
+	}
+	
+	public BinaryNode add(int max,int count,BinaryNode node){
+		if(node==NULL_NODE){
+			node = new BinaryNode(count);
+		}
+		if(max<0){
+			return NULL_NODE;
+		}
+		if(count==0){
+			node = new BinaryNode(count);
+		}
+		if(count<max){
+			node.left = add(max, count+1, node.left);
+			node.right = add(max, count+1, node.right);
+		}
+		return node;
+		
+	}
+
+	public int getSumOfHeights() {
+		// TODO. 2 Write this.
+		// Can you do it in O(n) time instead of O(n log n) by avoiding repeated
+		// calls to height()?
+		return this.root.heights(true);
+	}
+
+	// These are here for testing.
+	public void insert(Integer e) {
+		root = root.insert(e);
+	}
+
+	/**
+	 * @return A string showing an in-order traversal of nodes with extra
+	 *         brackets so that the structure of the tree can be determined.
+	 */
+	public String toStructuredString() {
+		return root.toStructuredString();
+	}
+
+	// /////////////// BinaryNode
+	public class BinaryNode {
+
+		public Integer data;
+		public BinaryNode left;
+		public BinaryNode right;
+
+		public BinaryNode(Integer element) {
+			this.data = element;
+			this.left = NULL_NODE;
+			this.right = NULL_NODE;
+		}
+		
+		public int adder(int num){
+			int count=0;
+			while(num>=0){
+				count+= num;
+				num--;
+			}
+			return count;
+		}
+
+		public int heights(boolean isRoot) {
+			// TODO Auto-generated method stub.
+			if(this==NULL_NODE){
+				return -1;
+			}
+//			System.out.println("initia  " + initialHeight);
+//			System.out.println("old  " + oldHeight);
+//			if(initialHeight!=0){
+//				return oldHeight+ Math.max(left.heights(oldHeight),right.heights(oldHeight));
+//			}
+//			if((left == NULL_NODE && right==NULL_NODE)||left==NULL_NODE||right==NULL_NODE){
+//				return 1+Math.max(left.heights(), right.heights());
+//			}
+			if(isRoot && this.left==NULL_NODE || this.right==NULL_NODE){
+				return 1+Math.max(this.left.heights(false), this.right.heights(false));
+			}
+			int rh = (1+this.left.heights(true));
+			int lh = (1+this.right.heights(true))
+			int leftHeight = adder(rh);
+			int rightHeight = adder(lh);
+			System.out.println("LH  " + leftHeight);
+			System.out.println("RH  " + rightHeight);
+//			System.out.println("mathmax" + Math.max(left.heights(false), right.heights(false)));
+////			System.out.println(Math.max(leftHeight, rightHeight)+5);
+//			System.out.println(leftHeight-Math.max(left.heights(false), right.heights(false)));
+			return leftHeight+rightHeight-Math.min(leftHeight,rightHeight);
+		}
+
+		public BinaryNode insert(Integer e) {
+			if (this == NULL_NODE) {
+				return new BinaryNode(e);
+			} else if (e.compareTo(data) < 0) {
+				left = left.insert(e);
+			} else if (e.compareTo(data) > 0) {
+				right = right.insert(e);
+			} else {
+				// do nothing
+			}
+			return this;
+		}
+		
+		
+
+		public String toStructuredString() {
+			if (this == NULL_NODE) {
+				return "";
+			}
+			return "[" + left.toStructuredString() + this.data
+					+ right.toStructuredString() + "]";
+		}
+
+	}
+}

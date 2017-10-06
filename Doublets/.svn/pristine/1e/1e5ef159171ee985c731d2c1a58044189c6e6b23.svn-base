@@ -1,0 +1,35 @@
+import java.util.Stack;
+
+/**
+ * 
+ * TODO Put here a description of what this class does.
+ *
+ * @author xiek and Hussein Alawami.
+ *         Created Sep 21, 2017.
+ */
+
+public class StackChainManager extends ChainManager {
+	Stack<Chain> stk;
+	
+	public StackChainManager() {
+		this.stk = new Stack<>();
+	}
+	
+	@Override
+	public void add(Chain chain) {
+		this.stk.push(chain);
+		this.updateMax(stk.size());
+	}
+
+	@Override
+	public Chain next() {
+		this.incrementNumNexts();
+		return this.stk.pop();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.stk.isEmpty();
+	}
+
+}

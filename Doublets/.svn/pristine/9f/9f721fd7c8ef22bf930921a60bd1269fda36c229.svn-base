@@ -1,0 +1,75 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Links implements LinksInterface {
+
+	ArrayList<String> tempString;
+	HashMap<String,Set<String>> map;
+	HashSet<String> candidates;
+	
+	public Links(String name) throws FileNotFoundException {
+		// TODO Auto-generated constructor stub.
+		this.map = new HashMap();
+		this.tempString = new ArrayList<>();
+		populate(name);
+	}
+	
+	public void populate(String name) throws FileNotFoundException{
+		try(BufferedReader in = new BufferedReader(new FileReader(name))){
+			String line = in.readLine();
+			while(line != null && !line.equals(" ")){
+				this.tempString.add(line);
+				line = in.readLine();
+			}
+			in.close();
+		} catch (IOException exception) {
+			// TODO Auto-generated catch-block stub.
+			exception.printStackTrace();
+		}
+		for(int i =0;i<this.tempString.size();i++){
+			this.map.put(this.tempString.get(i), getCandidatesList(this.tempString.get(i)));
+		}
+	}
+	
+	public Set<String> getCandidatesList(String word){
+		this.candidates=new HashSet<>();
+		String[] alphabet = {"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"};
+		if(!this.tempString.contains(word)){
+			this.candidates = null;
+			return this.candidates;
+		}
+		for(int i =0;i<word.length();i++){
+			for(int j =0;j<26;j++){
+				if(this.tempString.contains(word.substring(0,i) + alphabet[j]+word.substring(i+1, word.length()))){
+					this.candidates.add(word.substring(0,i) + alphabet[j]+word.substring(i+1, word.length()));
+				}
+			}
+		}
+		if(this.candidates.size()==1){
+			this.candidates=null;
+			return this.candidates;
+		}else{
+			this.candidates.remove(word);
+		}
+		return this.candidates;
+	}
+	
+	@Override
+	public Set<String> getCandidates(String word) {
+		// TODO Auto-generated method stub.
+		return this.map.get(word);
+	}
+
+	@Override
+	public boolean exists(String word) {
+		// TODO Auto-generated method stub.
+		return this.map.containsKey(word);
+	}
+
+}

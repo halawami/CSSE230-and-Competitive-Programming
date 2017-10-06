@@ -1,0 +1,87 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Links implements LinksInterface {
+	HashMap<String, Set<String>> map;
+	Set<String> set;
+	
+	public Links(String word){
+		this.map = new HashMap<>();
+		try{
+			this.set = new HashSet<>();
+			
+			//read all words in the dictionary
+			BufferedReader br = new BufferedReader(new FileReader(new File(word)));
+			String s = null;
+			while((s=br.readLine())!=null){
+				this.set.add(s);
+			}
+			br.close();
+			
+			//transfer hashset to hashmap
+			
+			for(String s1 : set){
+				Set<String> set1 = new HashSet<>();
+				for(String s2 : set){
+					if(getDistance(s1,s2)==1){
+						set1.add(s2);
+					}
+				}
+				if(set1.size()>0)
+					this.map.put(s1, set1);
+			}
+			
+			/*
+			 * 42s
+			Set<String> set1;
+			String s1, s2;
+			Iterator<String> i1 = this.set.iterator();
+			while(i1.hasNext()){
+				set1 = new HashSet<>();
+				s1 = i1.next();
+				Iterator<String> i2 = this.set.iterator();
+				while(i2.hasNext()){
+					s2 = i2.next();
+					if(getDistance(s1, s2)==1)
+						set1.add(s2);
+				}
+				if(set1.size()>0)
+					this.map.put(s1, set1);
+				
+			}
+			*/
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Set<String> getCandidates(String word) {
+		
+		return this.map.get(word);
+	}
+
+	@Override
+	public boolean exists(String word) {
+		if(this.set.isEmpty())
+			return false;
+		return this.set.contains(word);
+	}
+
+	private int getDistance(String target, String dest){
+		if(target.length()!=dest.length())
+			return -1;
+		if(target.equals(dest))
+			return 0;
+		int cnt=0;
+		for(int i = 0;i<target.length();i++){
+			if(target.charAt(i)!=dest.charAt(i))
+				cnt++;
+		}
+		return cnt;
+	}
+}

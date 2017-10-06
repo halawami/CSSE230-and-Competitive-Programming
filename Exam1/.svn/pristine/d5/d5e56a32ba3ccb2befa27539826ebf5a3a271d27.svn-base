@@ -1,0 +1,32 @@
+package countDuplicates;
+
+import java.util.List;
+
+public class Main {
+
+	/**
+	 * Given a List of Strings, returns a List containing StringWithCount objects,
+	 * in alphabetical order by string and with no duplicate strings. The counts should
+	 * match the number of times each string appears in the input list.
+	 * @return
+	 */
+	public static List<StringWithCount> countDuplicates(List<String> list) {
+		// TODO: write this method!
+		return null;
+	}
+}
+
+
+class StringWithCount {
+	String str;
+	int count;
+	
+	StringWithCount(String s, int c) {
+		this.str = s;
+		this.count = c;
+	}
+	
+	public String toString() {
+		return "(" + str + "," + Integer.toString(count) + ")";
+	}
+}

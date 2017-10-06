@@ -1,0 +1,79 @@
+package list;
+
+/**
+ * 
+ * @author anderson
+ * 
+ * @param <T>
+ *            Any Comparable type
+ * 
+ *            A linked list whose elements are kept in sorted order.
+ */
+public class SortedLinkedList<T extends Comparable<T>> extends
+		DoublyLinkedList<T> {
+
+	/**
+	 * Create an empty list
+	 * 
+	 */
+	public SortedLinkedList() {
+		super();
+	}
+
+	/**
+	 * Creates a sorted list containing the same elements as the parameter
+	 * 
+	 * @param list
+	 *            the input list
+	 */
+	public SortedLinkedList(DoublyLinkedList<T> list) {
+		super();
+		// TODO: finish implementing this constructor
+		
+	}
+
+	/**
+	 * Adds the given element to the list, keeping it sorted.
+	 */
+	@Override
+	public void add(T element) {
+		// TODO: implement this method
+		Node current = this.head;
+		Node newNode = null;
+		if(current.next!=this.tail){
+			while(element.compareTo(current.next.data)<0){
+				current = current.next;
+			}
+		}else{
+			current.next.data = element;
+			current.next.prev = newNode;
+			newNode.next = current.next;
+			newNode.prev = current;
+			current.next = newNode;
+		}
+	}
+
+	@Override
+	public void addFirst(T element) throws UnsupportedOperationException{
+		// TODO: throw UnsupportedOperationException exception
+		Node current = this.head;
+		Node newNode = null;
+		current.next.data = element;
+		current.next.prev= newNode;
+		newNode.next = current.next;
+		newNode.prev = current;
+		current.next=newNode;
+	}
+
+	@Override
+	public void addLast(T element) throws UnsupportedOperationException{
+		// TODO: throw UnsupportedOperationException exception
+		Node current = this.tail;
+		Node newNode = null;
+		current.prev.next.data = element;
+		current.next.prev= newNode;
+		newNode.next = current.next;
+		newNode.prev = current;
+		current.next=newNode;
+	}
+}

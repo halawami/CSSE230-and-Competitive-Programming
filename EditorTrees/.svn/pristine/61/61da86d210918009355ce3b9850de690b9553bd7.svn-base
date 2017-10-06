@@ -1,0 +1,175 @@
+package editortrees;
+
+// A node in a height-balanced binary tree with rank.
+// Except for the NULL_NODE (if you choose to use one), one node cannot
+// belong to two different trees.
+
+public class Node {
+
+	enum Code {
+		SAME, LEFT, RIGHT;
+		// Used in the displayer and debug string
+		public String toString() {
+			switch (this) {
+			case LEFT:
+				return "/";
+			case SAME:
+				return "=";
+			case RIGHT:
+				return "\\";
+			default:
+				throw new IllegalStateException();
+			}
+		}
+	}
+
+	// The fields would normally be private, but for the purposes of this class, 
+	// we want to be able to test the results of the algorithms in addition to the
+	// "publicly visible" effects
+
+	char element;
+	Node left, right; // subtrees
+	int rank; // inorder position of this node within its own subtree.
+	Code balance;
+	//Node parent; // You may want this field.
+	boolean rightDivergence; //if this node is to the right of it's parent 
+	// Feel free to add other fields that you find useful
+
+	// You will probably want to add several other methods
+
+	// For the following methods, you should fill in the details so that they work correctly
+
+	public Node() {
+		this.element = Character.MIN_VALUE;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node(int rank) {
+		this.element = Character.MIN_VALUE;
+		this.rank = rank;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node(char element) {
+		this.element = element;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node(char element, int pos) {
+		this.element = element;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node add(char add) {
+		if (this == EditTree.Null_Node) {
+			return new Node(add);
+		}
+		this.right = this.right.add(add);
+		return this;
+	}
+
+	public Node addAt(char ch, int pos) {
+		if (this == EditTree.Null_Node) {
+			if (pos == 0) {
+				return new Node(ch);
+			} else {
+				throw new IndexOutOfBoundsException();
+			}
+		}
+
+		if (this.rank < pos) {
+			this.right = this.right.addAt(ch, pos - this.rank - 1);
+		} else {
+			this.rank++;
+			this.left = this.left.addAt(ch, pos);
+		}
+		return this;
+
+	}
+
+	//	public void addNode(char ch, boolean isRight) {
+	//		Node newNode = new Node();
+	//		newNode.element = ch;
+	//		newNode.rightDivergence = isRight;
+	//		if (isRight) {
+	//			this.right = newNode;
+	//		} else {
+	//			this.left = newNode;
+	//		}
+	//		newNode.parent = this;
+	//
+	//		//balanceCodeFucks
+	//
+	//	}
+
+	public int height() {
+		return -2;
+	}
+
+	public int size() {
+		return -1;
+	}
+
+	//	public Node findNode(int pos) throws IndexOutOfBoundsException {
+	//		if (this.findPos() == pos) {
+	//			return this;
+	//		} else if (this.findPos() > pos) {
+	//			return this.left.findNode(pos);
+	//		} else {
+	//			if (this.right == EditTree.Null_Node) {
+	//				if (pos - this.findPos() == 1) {
+	//					Node newNode = new Node(0);
+	//					newNode.parent = this;
+	//					this.right = newNode;
+	//					newNode.rightDivergence = true;
+	//					return newNode;
+	//				} else {
+	//					throw new IndexOutOfBoundsException();
+	//				}
+	//			}
+	//			return this.right.findNode(pos);
+	//		}
+	//	}
+
+	//	public int findPos() {
+	//		if (this.parent == EditTree.Null_Node) {
+	//			return this.rank;
+	//		}
+	//		return this.findRightDivergence().findPos() + this.rank + 1;
+	//	}
+
+	/**
+	 * Finds the parent that this subtree's parents diverge to the right from
+	 *
+	 * @return
+	 */
+	//	public int findRightDivergencePos() {
+	//		if (this.parent == EditTree.Null_Node) {
+	//			return -1; //Null node has rank of -1; works with algorithm
+	//		}
+	//		if (this.rightDivergence) {
+	//			return this.parent;
+	//		} else {
+	//			return this.parent.findRightDivergence();
+	//		}
+	//	}
+
+	public void toString(StringBuilder addTo) {
+		if (this == EditTree.Null_Node) {
+			return;
+		}
+		this.left.toString(addTo);
+		if (this.element == Character.MIN_VALUE) {
+
+		} else {
+			addTo.append(this.element);
+		}
+		this.right.toString(addTo);
+		return;
+	}
+
+}

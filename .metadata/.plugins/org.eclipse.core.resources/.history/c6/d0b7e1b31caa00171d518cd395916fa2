@@ -1,0 +1,274 @@
+package editortrees;
+
+// A node in a height-balanced binary tree with rank.
+// Except for the NULL_NODE (if you choose to use one), one node cannot
+// belong to two different trees.
+
+public class Node {
+
+	enum Code {
+		SAME, LEFT, RIGHT;
+		// Used in the displayer and debug string
+		public String toString() {
+			switch (this) {
+			case LEFT:
+				return "/";
+			case SAME:
+				return "=";
+			case RIGHT:
+				return "\\";
+			default:
+				throw new IllegalStateException();
+			}
+		}
+	}
+
+	// The fields would normally be private, but for the purposes of this class, 
+	// we want to be able to test the results of the algorithms in addition to the
+	// "publicly visible" effects
+
+	char element;
+	Node left, right; // subtrees
+	int rank; // inorder position of this node within its own subtree.
+	Code balance = Code.SAME;
+	//Node parent; // You may want this field.
+	boolean rightDivergence; //if this node is to the right of it's parent 
+	int rotationCount;
+	// Feel free to add other fields that you find useful
+
+	// You will probably want to add several other methods
+
+	// For the following methods, you should fill in the details so that they work correctly
+
+	public Node() {
+		this.element = Character.MIN_VALUE;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node(int rank) {
+		this.element = Character.MIN_VALUE;
+		this.rank = rank;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node(char element) {
+		this.element = element;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node(char element, int pos) {
+		this.element = element;
+		this.left = EditTree.Null_Node;
+		this.right = EditTree.Null_Node;
+	}
+
+	public Node rotSL(Node parent) {
+		EditTree.rotationCounter++;
+		Node newParent = parent.right;
+		newParent.rank += (parent.rank + 1);
+		parent.right = newParent.left;
+		newParent.left = parent;
+		parent.balance = parent.getHeights();
+		newParent.balance = newParent.getHeights();
+		if(parent.right!= EditTree.Null_Node){
+			parent.right.balance = parent.right.getHeights();
+		}else if(parent.left!=EditTree.Null_Node){
+			parent.left.balance = parent.left.getHeights();
+		}
+		return newParent;
+	}
+
+	public Node rotDL(Node parent) {
+		parent.balance = parent.getHeights();
+		if(parent.right!= EditTree.Null_Node){
+			parent.right.balance = parent.right.getHeights();
+		}else if(parent.left!=EditTree.Null_Node){
+			parent.left.balance = parent.left.getHeights();
+		}
+		return rotSL(rotSR(parent));
+	}
+
+	public Node rotSR(Node parent) {
+		EditTree.rotationCounter++;
+		Node newParent = parent.left;
+		parent.rank -= (newParent.rank + 1);
+		parent.left = newParent.right;
+		newParent.right = parent;
+		parent.balance = parent.getHeights();
+		newParent.balance = newParent.getHeights();
+		if(parent.right!= EditTree.Null_Node){
+			parent.right.balance = parent.right.getHeights();
+		}else if(parent.left!=EditTree.Null_Node){
+			parent.left.balance = parent.left.getHeights();
+		}
+		return newParent;
+	}
+
+	public Node rotDR(Node parent) {
+		parent.balance = parent.getHeights();
+		if(parent.right!= EditTree.Null_Node){
+			parent.right.balance = parent.right.getHeights();
+		}else if(parent.left!=EditTree.Null_Node){
+			parent.left.balance = parent.left.getHeights();
+		}		
+		return rotSR(rotSL(parent));
+	}
+
+	public Info add(char add, Code dir) {
+		if (this == EditTree.Null_Node) {
+			return new Info(new Node(add), Code.RIGHT);
+		}
+		Info i = this.right.add(add, Code.RIGHT);
+		this.right = i.node;
+		if(this.right.getHeights() != Code.SAME && this.right.getHeights() == this.balance){
+			System.out.println("SL");
+			return new Info(rotSL(this),this.right.getHeights());
+		}
+		else if(this.right.getHeights() != Code.SAME ){
+			System.out.println("DL");
+			return new Info(rotDL(this),this.getHeights());
+		}
+		else{
+			return new Info(this,this.getHeights());
+		}
+	}
+
+	public Info addAt(char ch, int pos) {
+		if (this == EditTree.Null_Node) {
+			if (pos == 0) {
+				return new Info(new Node(ch), Code.SAME);
+			}
+			throw new IndexOutOfBoundsException();
+		}
+		if(this != EditTree.Null_Node){
+			this.balance = this.getHeights();
+		}
+		if (this.rank < pos) {
+//			if(this != EditTree.Null_Node){
+//				this.balance = this.getHeights();
+//			}
+			this.right = this.right.addAt(ch, pos - this.rank - 1).node;
+			if(this.right.getHeights() != Code.SAME && this.right.getHeights() == this.balance){
+				System.out.println("SL");
+				return new Info(rotSL(this),this.getHeights());
+			}
+			else if(this.right.getHeights() != Code.SAME){
+				System.out.println("DL");
+				return new Info(rotDL(this),this.getHeights());
+			}
+			else{
+//				if(this != EditTree.Null_Node){
+//					this.balance = this.getHeights();
+//				}
+				return new Info(this,this.getHeights());
+			}
+		} else {
+			Code leftHeight = this.left.getHeights();
+			this.rank++;
+			this.left = this.left.addAt(ch, pos).node;
+//			if(this != EditTree.Null_Node){
+//				this.balance = this.getHeights();
+//			}
+			if(leftHeight != Code.SAME && leftHeight.equals(this.balance)){
+				System.out.println("left height " + leftHeight);
+				System.out.println("this code" + this.balance);
+				System.out.println(leftHeight==this.balance);
+				System.out.println("SR");
+				return new Info(rotSR(this),this.getHeights());
+			}
+			else if (leftHeight != Code.SAME && leftHeight != this.balance){
+				System.out.println("DR");
+				return new Info(rotDR(this),this.getHeights());
+			}
+			else{
+//				if(this != EditTree.Null_Node){
+//					this.balance = this.getHeights();
+//				}
+				return new Info(this,this.getHeights());
+			}
+		}
+	}
+	
+	public Code getHeights(){
+		int rh,lh;
+		if(this==EditTree.Null_Node){
+			return Code.SAME;
+		}
+		if(this.right!=null){
+			rh = this.right.height();
+		}else{
+			rh = -1;
+		}
+		if(this.left!=null){
+			lh = this.left.height();
+		}else{
+			lh = -1;
+		}
+		if(rh > lh){
+			this.balance = Code.RIGHT;			
+			return Code.RIGHT;
+		}else if(rh<lh){
+			this.balance = Code.LEFT;
+			return Code.LEFT;
+		}else{
+			this.balance = Code.SAME;
+			return Code.SAME;
+		}
+	}
+
+	public Node get(int pos) {
+		if (this == EditTree.Null_Node) {
+			throw new IndexOutOfBoundsException();
+		}
+		if (this.rank < pos) {
+			this.right = this.right.get(pos);
+		} else {
+			this.left = this.left.get(pos);
+		}
+		return this;
+	}
+
+	public int height() {
+		if (this == EditTree.Null_Node) {
+			return -1;
+		}
+		return 1 + Math.max(this.left.height(), this.right.height());
+	}
+
+	public int size() {
+		return -1;
+	}
+
+	public void toDebugString(StringBuilder addTo) {
+		if (this == EditTree.Null_Node) {
+			return;
+		}
+
+		addTo.append(this.element);
+		addTo.append(this.rank);
+		addTo.append(this.balance.toString());
+		addTo.append(", ");
+
+		this.left.toDebugString(addTo);
+
+		this.right.toDebugString(addTo);
+	}
+
+	public void toString(StringBuilder addTo) {
+		if (this == EditTree.Null_Node) {
+			return;
+		}
+		this.left.toString(addTo);
+		if (this.element == Character.MIN_VALUE) {
+
+		} else {
+			addTo.append(this.element);
+		}
+		this.right.toString(addTo);
+		return;
+	}
+
+}

@@ -1,0 +1,47 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+public class Links implements LinksInterface {
+
+	HashSet<String> strings;
+	public Links(String name) throws FileNotFoundException {
+		// TODO Auto-generated constructor stub.
+		this.strings = new HashSet();
+		populate(name);
+	}
+	
+	public void populate(String name) throws FileNotFoundException{
+		try(BufferedReader in = new BufferedReader(new FileReader(name))){
+			String line = in.readLine();
+			while(line != null && !line.equals(" ")){
+				this.strings.add(line);
+				line = in.readLine();
+			}
+			in.close();
+		} catch (IOException exception) {
+			// TODO Auto-generated catch-block stub.
+			exception.printStackTrace();
+		}
+	}
+	
+	@Override
+	public Set<String> getCandidates(String word) {
+		// TODO Auto-generated method stub.
+		HashSet<String> candidates = new HashSet<>();
+		if(this.strings.contains(word)){
+			
+		}
+		return this.strings;
+	}
+
+	@Override
+	public boolean exists(String word) {
+		// TODO Auto-generated method stub.
+		return this.strings.contains(word);
+	}
+
+}

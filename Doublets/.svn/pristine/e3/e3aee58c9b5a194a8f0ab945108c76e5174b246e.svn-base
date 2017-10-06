@@ -1,0 +1,27 @@
+import java.util.Stack;
+
+public class StackChainManager extends ChainManager {
+	Stack<Chain> stk;
+	
+	public StackChainManager() {
+		this.stk = new Stack<>();
+	}
+	
+	@Override
+	public void add(Chain chain) {
+		this.stk.push(chain);
+		this.updateMax(stk.size());
+	}
+
+	@Override
+	public Chain next() {
+		this.incrementNumNexts();
+		return this.stk.pop();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return this.stk.isEmpty();
+	}
+
+}
