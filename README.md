@@ -1,1 +1,1 @@
-# CSSE230-and-Competitive-Programming
+# CSSE230 - Data Structures and Algorithms class
